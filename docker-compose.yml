@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+
+  nginx:
+    container_name: nginx
+    build:
+      context: ./docker
+      dockerfile: nginx.dockerfile
+    ports:
+      - 8084:80
+    volumes:
+      - ./site:/var/www/backend
+    depends_on:
+      - mysql
+      - php
+
+  php:
+   container_name: php
+   build:
+    context: ./docker
+    dockerfile: php.dockerfile
+   volumes:
+    - ./site:/var/www/backend
+   working_dir: /var/www/backend
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_USER: sudip
+        MYSQL_PASSWORD: sudip
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/data:/var/lib/mysql
+  
+  node:
+    container_name: node
+    build:
+      context: ./docker
+      dockerfile: node.dockerfile
+    volumes:
+      - ./site/:/var/www/backend
+    working_dir: /var/www/backend
+
+  artisan:
+    container_name: artisan
+    build:
+     context: ./docker
+     dockerfile: php.dockerfile
+    volumes:
+     - ./site/:/var/www/backend
+    working_dir: /var/www/backend
+    depends_on:
+     - mysql
+    entrypoint: ["php", "/var/www/backend/artisan"]
+   
+
+      
+

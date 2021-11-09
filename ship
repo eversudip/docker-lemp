@@ -23,10 +23,13 @@ if [ $# -gt 0 ]; then
     elif [ "$1" == "mysql" ]; then
         docker compose exec mysql bash
 
+    elif [ "$1" == "import" ]; then
+        docker exec -i mysql_den mysql -h127.0.0.1 -uroot -proot dental < /Users/sudipsubedi/downloads/moo_2021.sql
+
     elif [ "$1" == "artisan" ] || [ "$1" == "art" ]; then
         shift 1
         docker compose exec \
-            artisan \
+            php \
             php artisan "$@"
 
     elif [ "$1" == "composer" ] || [ "$1" == "comp" ]; then
